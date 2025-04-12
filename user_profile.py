@@ -17,8 +17,8 @@ class MainWindow(QMainWindow):
 
     def createImageLabels(self):
         """Створення міток для зображень"""
-        image = ["images/skyblue.png", "images/profile_image.png"]
-        for image in image:
+        images = ["images/skyblue.png", "images/profile_image.png"]
+        for image in images:
             try:
                 with open(image):
                     label = QLabel(self)
