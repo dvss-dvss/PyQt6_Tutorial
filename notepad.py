@@ -22,6 +22,7 @@ class MainWindow(QMainWindow):
     def setUpMainWindow(self):
         """Налаштування основного вікна"""
         self.text_edit = QTextEdit()
+        self.text_edit.textChanged.connect(self.removeHighlights)
         self.setCentralWidget(self.text_edit)
 
     def createActions(self):
@@ -68,18 +69,18 @@ class MainWindow(QMainWindow):
 
         self.font_action = QAction(QIcon("image/font.png"), "&Шрифт", self)
         self.font_action.setShortcut("Ctrl+T")
-        #self.font_action.triggered.connect(self.setFont)
+        self.font_action.triggered.connect(self.chooseFont)
 
         self.color_action = QAction(QIcon("image/color.png"), "&Колір", self)
         self.color_action.setShortcut("Ctrl+Shift+C")
-        #self.color_action.triggered.connect(self.setColor)
+        self.color_action.triggered.connect(self.chooseColor)
 
         self.highlight_action = QAction(QIcon("image/highlight.png"), "&Виділити", self)
         self.highlight_action.setShortcut("Ctrl+H")
-        #self.highlight_action.triggered.connect(self.highlightText)
+        self.highlight_action.triggered.connect(self.chooseHighlightColor)
          
         self.about_action = QAction("&Про програму")
-        #self.about_action.triggered.connect(self.aboutDialog)   
+        self.about_action.triggered.connect(self.aboutDialog)   
 
     def createMenu(self):
         """Створення меню"""
@@ -165,6 +166,38 @@ class MainWindow(QMainWindow):
                 selection.cursor = self.text_edit.textCursor()
                 extra_selections.append(selection)
             self.text_edit.setExtraSelections(extra_selections)
+
+    def removeHighlights(self):
+        """Приховування виділення"""
+        self.text_edit.setExtraSelections([])
+
+    def chooseFont(self):
+        """Вибір шрифту"""
+        current = self.text_edit.currentFont()
+        opt = QFontDialog.FontDialogOption.DontUseNativeDialog
+        font, ok = QFontDialog.getFont(current, self, "Вибір шрифту", opt)
+        if ok:
+            self.text_edit.setCurrentFont(font)
+
+    def chooseColor(self):
+        """Вибір кольору тексту"""
+        color = QColorDialog.getColor()
+        if color.isValid():
+            self.text_edit.setTextColor(color)
+
+    def chooseHighlightColor(self):
+        """Вибір кольору виділення"""
+        color = QColorDialog.getColor()
+        if color.isValid():
+            self.text_edit.setTextBackgroundColor(color)
+
+    def aboutDialog(self):
+        """Вікно про програму"""
+        QMessageBox.about(
+            self,
+              "Про програму",
+              "Це простий текстовий редактор на PyQt6."
+        )
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
